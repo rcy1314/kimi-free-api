@@ -11,11 +11,11 @@
 ![](https://img.shields.io/github/forks/llm-red-team/kimi-free-api.svg)
 ![](https://img.shields.io/docker/pulls/vinlic/kimi-free-api.svg)
 
-支持高速流式输出、支持多轮对话、支持联网搜索、支持长文档解读、支持图像解析，零配置部署，多路token支持，自动清理会话痕迹。
+支持高速流式输出、支持多轮对话、支持联网搜索、支持智能体对话、支持长文档解读、支持图像OCR，零配置部署，多路token支持，自动清理会话痕迹。
 
 与ChatGPT接口完全兼容。
 
-还有以下六个free-api欢迎关注：
+还有以下八个free-api欢迎关注：
 
 阶跃星辰 (跃问StepChat) 接口转API [step-free-api](https://github.com/LLM-Red-Team/step-free-api)
 
@@ -26,6 +26,10 @@
 秘塔AI (Metaso) 接口转API [metaso-free-api](https://github.com/LLM-Red-Team/metaso-free-api)
 
 讯飞星火（Spark）接口转API [spark-free-api](https://github.com/LLM-Red-Team/spark-free-api)
+
+MiniMax（海螺AI）接口转API [hailuo-free-api](https://github.com/LLM-Red-Team/hailuo-free-api)
+
+深度求索（DeepSeek）接口转API [deepseek-free-api](https://github.com/LLM-Red-Team/deepseek-free-api)
 
 聆心智能 (Emohaa) 接口转API [emohaa-free-api](https://github.com/LLM-Red-Team/emohaa-free-api)
 
@@ -42,6 +46,7 @@
 * [Vercel部署](#Vercel部署)
 * [Zeabur部署](#Zeabur部署)
 * [原生部署](#原生部署)
+* [推荐使用客户端](#推荐使用客户端)
 * [接口列表](#接口列表)
   * [对话补全](#对话补全)
   * [文档解读](#文档解读)
@@ -84,11 +89,17 @@ https://udify.app/chat/Po0F6BMJ15q5vu2P
 
 ![联网搜索](./doc/example-2.png)
 
+### 智能体对话Demo
+
+此处使用 [翻译通](https://kimi.moonshot.cn/chat/coo6l3pkqq4ri39f36bg) 智能体。
+
+![智能体对话](./doc/example-7.png)
+
 ### 长文档解读Demo
 
 ![长文档解读](./doc/example-5.png)
 
-### 图像解析Demo
+### 图像OCR Demo
 
 ![图像解析](./doc/example-3.png)
 
@@ -241,6 +252,14 @@ pm2 reload kimi-free-api
 pm2 stop kimi-free-api
 ```
 
+## 推荐使用客户端
+
+使用以下二次开发客户端接入free-api系列项目更快更简单，支持文档/图像上传！
+
+由 [Clivia](https://github.com/Yanyutin753/lobe-chat) 二次开发的LobeChat [https://github.com/Yanyutin753/lobe-chat](https://github.com/Yanyutin753/lobe-chat)
+
+由 [时光@](https://github.com/SuYxh) 二次开发的ChatGPT Web [https://github.com/SuYxh/chatgpt-web-sea](https://github.com/SuYxh/chatgpt-web-sea)
+
 ## 接口列表
 
 目前支持与openai兼容的 `/v1/chat/completions` 接口，可自行使用与openai或其他兼容的客户端接入接口，或者使用 [dify](https://dify.ai/) 等线上服务接入使用。
@@ -260,8 +279,12 @@ Authorization: Bearer [refresh_token]
 请求数据：
 ```json
 {
-    // 模型名称随意填写，如果不希望输出检索过程模型名称请包含silent_search
+    // model随意填写，如果不希望输出检索过程模型名称请包含silent_search
+    // 如果使用kimi+智能体，model请填写智能体ID，就是浏览器地址栏上尾部的一串英文+数字20个字符的ID
     "model": "kimi",
+    // 目前多轮对话基于消息合并实现，某些场景可能导致能力下降且受单轮最大Token数限制
+    // 如果您想获得原生的多轮对话体验，可以传入首轮消息获得的id，来接续上下文，注意如果使用这个，首轮必须传none，否则第二轮会空响应！
+    // "conversation_id": "cnndivilnl96vah411dg",
     "messages": [
         {
             "role": "user",
@@ -278,6 +301,7 @@ Authorization: Bearer [refresh_token]
 响应数据：
 ```json
 {
+    // 如果想获得原生多轮对话体验，此id，你可以传入到下一轮对话的conversation_id来接续上下文
     "id": "cnndivilnl96vah411dg",
     "model": "kimi",
     "object": "chat.completion",
@@ -364,7 +388,7 @@ Authorization: Bearer [refresh_token]
 }
 ```
 
-### 图像解析
+### 图像OCR
 
 提供一个可访问的图像URL或者BASE64_URL进行解析。
 
